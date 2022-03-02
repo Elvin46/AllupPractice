@@ -1,0 +1,86 @@
+﻿@model List<Category>;
+@{
+    ViewData["Title"] = "Index";
+}
+
+<div class="row">
+    <div class="col-lg-12 grid-margin stretch-card">
+              <div class="card">
+                <div class="card-body">
+                  <h4 class="card-title">Basic Table</h4>
+                  <div class="table-responsive">
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th>Id</th>
+                          <th>Name</th>
+                          <th>IsMain</th>
+                          <th>Actions</th>
+
+                        </tr>
+                      </thead>
+                      <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                  <td>@item.Id</td>
+                                  <td>@item.Name</td>
+                                  <td>@item.IsMain</td>
+                                  <td>
+                                      <a class="btn btn-warning" asp-action="Update" asp-route-id="@item.Id">Update</a>
+                                      <a class="btn btn-success" asp-action="Details" asp-route-id="@item.Id">Details</a>
+                                      <a class="btn btn-danger delete-item" asp-action="Delete" asp-route-id=@item.Id>Delete</a>
+                                  </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+</div>
+@section Scripts{ 
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <script>
+        $(document).ready(function () {
+            $(".delete-item").click(function (ev) {
+                ev.preventDefault();
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        let link = $(this).attr("href")
+                        fetch(link).then(response => response.json()).then(data => {
+                            if (data.status == 200) {
+                                Swal.fire(
+                                    'Deleted!',
+                                    'Your file has been deleted.',
+                                    'success'
+                                )
+                                setTimeout(() =>
+                                { location.reload(true) }, 2000);
+                            }
+                            else {
+                                Swal.fire(
+                                    'Error!',
+                                    'Your file not Found.',
+                                    'Failed'
+                                )
+                            }
+                        })
+                     
+                    }
+                })
+            })
+        })
+    </script>
+}
+
